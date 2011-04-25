@@ -246,7 +246,7 @@ handle_event (evdev_t * dev, int devindex, struct input_event * ev)
 	XErrorHandler   old_handler;
 		
 	if ((ev->type != EV_KEY) && 
-	    ((ev->type != EV_REL) || (ev->code < REL_Z)) &&
+	    ((ev->type != EV_REL)) &&
 	    (ev->type != EV_SW)) return;
 
 	assert (devindex >= 0);
@@ -359,7 +359,7 @@ print_event (evdev_t * dev, int devindex, struct input_event * ev)
 		       dev->filename,
 		       string_modifiers (get_modifier_state (d)),
 		       ev->code);
-	} else if ((ev->type == EV_REL) && (ev->code >= REL_Z)) {
+	} else if ((ev->type == EV_REL)) {
 		get_focus ();
 		
 		printf("\"%s\" \"%s\" %s rel/%d/%d \"fill this in!\"\n",

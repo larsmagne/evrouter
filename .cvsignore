@@ -1,0 +1,17 @@
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache
+build-stamp
+config.cache
+config.guess
+config.h
+config.log
+config.status
+config.sub
+stamp-h
+stamp-h.in
+stamp-h1
+ttyconv.lsm
+ttyconv.spec
+configure

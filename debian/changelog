@@ -1,0 +1,74 @@
+evrouter (0.4) unstable; urgency=low
+
+  * Incorporated patch www.digriz.org.uk.
+
+ -- Alexios Chouchoulas <alexios@bedroomlan.org>  Tue, 03 Mar 2009 02:11:06 +0200
+
+evrouter (0.3.4) unstable; urgency=medium
+
+  * Fixed segmentation fault when event devices are removed.
+  * Modernised GNU build infrastructure.
+  * Re-debianised to keep package ahead of Debian packaging developments.
+  * Fixed needless dependencies.
+  * Changed URLs yet again.
+
+ -- Alexios Chouchoulas <alexios@bedroomlan.org>  Wed, 18 Feb 2009 11:15:32 +0200
+
+evrouter (0.3.3) unstable; urgency=low
+
+  * Interim release to rebuild CVS repository after near-catastrophic disk
+    failure.
+  * Changed email address.
+  * Changed URL.
+
+ -- Alexios Chouchoulas <alexios@vennea.demon.co.uk>  Tue,  7 Sep 2004 23:59:28 +0100
+
+evrouter (0.3.2) unstable; urgency=medium
+
+  * Added -q flag to kill the running daemon.
+  * Fixed foreground mode that wouldn't. Many thanks to Stephen Graham for
+    spotting this.
+  * Updated manpage.
+  * Spell-check manpage, spell-check manpage. Fix, fix.
+  * Changed the configure.in package name from evwheel (the original
+    project name) to evrouter. Again, thanks to Stephen Graham.
+  * Removed bad-window message (unless --verbose was specified).
+  * Added a newline to the bad-window message.
+
+ -- Alexios Chouchoulas <alexios@bedroomlan.org>  Thu, 12 Feb 2004 00:32:54 +0000
+
+evrouter (0.3.1) unstable; urgency=low
+
+  * A few slight changes and cleanups in the build and accoompanying
+    files.
+
+ -- Alexios Chouchoulas <alexios@bedroomlan.org>  Thu,  5 Feb 2004 14:27:55 +0000
+
+evrouter (0.3) unstable; urgency=medium
+
+  * Added command line argument to list devices.
+  * Fixed Lock modifier bug.
+  * CVS import.
+  * Finally wrote manpage.
+  * Added option to run in the background.
+  * Added argp support.
+  * Cleaned up original source.
+
+ -- Alexios Chouchoulas <alexios@bedroomlan.org>  Thu, 29 Jan 2004 10:34:27 +0000
+
+evrouter (0.2) unstable; urgency=low
+
+  * Added XMMS actions, including dynamic linking (dlopen-specific for now).
+  * Added shell actions.
+  * Code cleanups and bug fixes.
+
+ -- Alexios Chouchoulas <alexios@bedroomlan.org>  Thu, 15 Jan 2003 21:56:00 +0000
+
+evrouter (0.1) unstable; urgency=low
+
+  * Added X mouse/device button actions to simulate mouse buttons.
+  * Renamed X actions to XKey actions.
+  * Added action mechanism to allow extensions.
+  * Initial revision.
+
+ -- Alexios Chouchoulas <alexios@bedroomlan.org>  Thu, 11 Jan 2003 19:23:45 +0000

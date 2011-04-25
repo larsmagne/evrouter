@@ -1,0 +1,11 @@
+dirs
+docs
+files
+files
+evrouter
+evrouter.postinst.debhelper
+evrouter.prerm.debhelper
+evrouter.substvars
+manpage.1
+manpages
+info

@@ -1,0 +1,496 @@
+.\"                              hey, Emacs:   -*- nroff -*-
+.\" evrouter is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; see the file COPYING.  If not, write to
+.\" the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.TH EVROUTER 1 "January 28, 2004"
+.\" Please update the above date whenever this man page is modified.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins (default)
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.\"
+.\" $Id: evrouter.1 14 2009-02-18 09:21:17Z alexios $
+.\"
+.\" $Log$
+.\" Revision 2.1  2004/09/07 23:00:59  alexios
+.\" Changed email address and URL.
+.\"
+.\" Revision 2.0  2004/09/07 22:57:39  alexios
+.\" Stepped version to recover CVS repository after near-catastrophic disk
+.\" crash.
+.\"
+.\" Revision 1.1.1.1  2004/09/07 22:52:34  alexios
+.\" Initial post-crash revision, re-initialised to recover CVS repository after
+.\" near-catastrophic disk crash.
+.\"
+.\" Revision 1.2  2004/02/12 00:14:58  alexios
+.\" Documented command line option for killing the running daemon. Spelling fixes.
+.\"
+.\" Revision 1.1  2004/01/29 10:28:20  alexios
+.\" Initial revision.
+.\"
+.\"
+.SH NAME
+evrouter \- An Event Interface router
+.SH SYNOPSIS
+.B evrouter
+[\fIOPTIONS\fP]
+\fIEVENT-DEVICE\fP ...
+.br
+.B evrouter -q
+.br
+.B evrouter -V
+.br
+.B evrouter -?
+.SH DESCRIPTION
+\fBevrouter\fP reads input events from the Linux Event Interface,
+translates them, and delivers them to another entity, usually the \fIX
+Windowing System\fP. The behaviour of this program was influenced by
+Jonathan Atkins' \fBimwheel\fP.
+.PP
+It does this by comparing each input event against a list of routing
+rules, usually found at \fI$HOME/.evrouterrc\fP.
+.PP
+\fBevrouter\fP was written to serve three basic needs: to help X11
+become aware of (parts of) input devices it has not been configured to
+use (or is entirely unable to use); to make old applications aware of
+newer X11 features such as mouse wheels and multi-button mice; and to
+interpret and act on certain hotkeys found on modern keyboards.
+.PP
+This version of \fBevrouter\fP can read button and key press, repeat
+and release events, as well as relative axes events (e.g. mouse
+wheels).
+.PP
+In response to such events, it can generate simulated X11 key events;
+simulated X11 mouse button events; execute shell commands (if enabled
+in the source); and control \fBxmms(1)\fP (if enabled in the source,
+and xmms is installed and running).
+.PP
+The behaviour of \fBevrouter\fP can be customised on a
+window-per-window basis, based on matching performed on the X11
+client's title, resource and class name. This allows individual
+clients to be provided with different simulated keypresses to cater
+for their own needs.
+.PP
+A \fIdump\fP mode is implemented in the router that reads input from
+event devices and prints them out in a format that can be cut and
+pasted into the \fI.evrouterrc\fP file.
+.SH EXIT STATUS
+If running in the background with the \fI-f\fP option, an exit status
+of zero indicates successful termination. If running as a daemon, an
+exit status of zero indicates the daemon was spawned successfully.  A
+non-zero exit status denotes abnormal termination due to an
+error. Check standard error.
+.SH OPTIONS
+\fBevrouter\fP accepts very few arguments:
+.TP
+.BR  -c ", " --config=\fICONFIG-FILE\fP
+Read the rules from \fICONFIG-FILE\fP instead of the default,
+\fI$HOME/.evrouterrc\fP.
+.TP
+.BR  -D ", " --devices
+Opens all event interface devices specified, queries their device
+names, and prints them out like this:
+.nf
+.RS
+\f(CW
+$ ./evrouter -D /dev/input/event*
+device  0: /dev/input/event0: B16_b_02 USB-PS/2 Optical Mouse
+device  1: /dev/input/event1: Logitech Logitech USB Keyboard
+device  2: /dev/input/event2: Logitech Logitech USB Keyboard
+\fR
+.fi
+.RE
+.TP
+.BR
+The third column is useful in building run control files.
+.TP
+.BR  -d ", " --dump
+Dump mode. The program runs in the foreground, reading input events
+from the kernel and printing them out in a format that can be turned
+into a run control file. The output should look like this (assuming
+you focus two different windows and press several keys on a USB
+keyboard):
+.nf
+.RS
+\f(CW
+Window "Emacs": # Window title
+# Window "emacs": # Resource name
+# Window "Emacs": # Class name
+"Acme USB Keyboard" "/dev/input/event1" none key/257 "fill this in!"
+"Acme USB Keyboard" "/dev/input/event1" shift key/257 "fill this in!"
+"Acme USB Keyboard" "/dev/input/event1" alt key/256 "fill this in!"
+"Acme USB Keyboard" "/dev/input/event1" none key/155 "fill this in!"
+
+Window "Shell - Konsole": # Window title
+# Window "konsole": # Resource name
+# Window "konsole": # Class name
+"Acme USB Keyboard" "/dev/input/event1" none key/114 "fill this in!"
+"Acme USB Keyboard" "/dev/input/event1" none key/114 "fill this in!"
+\fR
+.fi
+.RE
+.TP
+.BR
+For a thorough discussion of this format, please see the \fBUSAGE\fP section below.
+.TP
+.BR  -f ", " --foreground
+Do not run in the background. Useful for testing. This option is
+implied if \fB-d\fP is specified.
+.TP
+.BR  -q ", " --quit
+Kill the running daemon, then exit.
+.TP
+.BR  -v ", " --verbose
+Increase the verbosity of the program. This is only useful in
+debugging.
+.TP
+.BR  -? ", " --help
+List all available options and their meanings.
+.TP
+.BR --usage
+Display brief usage information.
+.TP
+.BR  -V ", " --version
+Show the program's version, credits and licensing.
+.SH USAGE
+\fBevrouter\fP rules can take action on a few different conditions,
+all of which can be specified in the run control file: the window name
+or client class name, or client resource name; the alphanumeric name
+of the peripheral; the filename of the event device (usually
+\fI/dev/input/event*\fP); the X11 modifier keys pressed when the event
+was received; and the input event itself.
+.PP
+The configuration file for \fBevrouter\fP has the following format:
+.PP
+Blank lines are ignored.
+.PP
+Anything after the first hash (\fB#\fP) on a line is considered a
+comment and ignored.
+.PP
+Non-blank lines that start with the keyword \fBWindow\fP or
+\fBwindow\fP must be of the format \fBWindow "REGEX"\fP, where
+\fIREGEX\fP is a POSIX regular expression as described in
+\fBregex(7)\fP. The specified regular expression is matched against:
+.IP
+the X11 window title of the currently focused window;
+.IP
+the X11 class name of this window;
+.IP
+and the X11 resource name of this window;
+.PP
+You can obtain this information using \fBxwininfo(1)\fP or \fBevrouter
+-d\fP. If any of the above three strings match the regular expression,
+the following rules will be interpreted. Otherwise, all rules until
+the next \fIWindow\fP keyword will be ignored. This has the effect of
+specifying which window or windows a group of rules applies to.
+.PP
+All other lines are assumed to be rules, following the format below:
+.nf
+.RS
+\f(CW
+"REGEX1" "REGEX2" MODMAP EVENT "ACTION"
+\fR
+.fi
+.RE
+.TP
+.BR REGEX1
+This POSIX regular expression is enclosed in double quotes. Use a
+backslash to escape double quotes within the expression. The
+expression is compared against the name of the device, as returned in
+the third column of the output of \fBevrouter -D /dev/input/*\fP (or
+similar). If the regular expression fails to match, the rule is
+skipped.
+.TP
+.BR REGEX2
+This POSIX regular works like \fBREGEX1\fP, but it is compared against
+the filename of the device node. This tends to be less useful than
+\fBREGEX1\fP, especially in hot-pluggable systems where the mapping of
+physical devices to logical nodes is arbitrary, but is provided for
+completeness. If the regular expression fails to match, the rule is
+skipped.
+.TP
+.BR MODMAP
+Is one or more of the following, separated by commas, plus signs or
+dashes: \fBshift\fP, \fBcontrol\fP (or \fBctrl\fP) \fBalt\fP (or
+\fBmeta\fP), \fBmod2\fP, \fBmod3\fP, \fBmod4\fP (or \fBsuper\fP, or
+\fBwin\fP), \fBmod5\fP. For example, \fBshift+control+alt\fP specifies
+that exactly these keys must be pressed for the rule to match. You can
+also use the special keywords \fBnone\fP (no modifiers keys must be
+pressed) and \fBany\fP (matches any combination of modifiers). The
+Lock modifier that is usually generated by Caps Lock is not
+considered at all.
+.TP
+.BR EVENT
+Provided all previous conditions were met, the rule will only match if
+the input event matches the one specified here. The event
+specification is in the format \fBTYPE\fP/\fBCODE\fP[/\fBVALUE\fP].
+Currently, \fBTYPE\fP can be either \fBkey\fP or \fBrel\fP, to denote
+key/button events and relative motion events (wheels, sticks,
+trims). \fBCODE\fP is the code of the key, button, wheel et
+cetera. Beware, these are \fInot\fP X11 keycodes, they are Linux Event
+Layer codes. Use \fBevrouter -d /dev/input/event*\fP to see what code
+a control generates. \fBVALUE\fP is only used with \fBrel\fP, and
+encodes the direction and distance of the relative motion. For mouse
+wheels, the primary application of this event type, this is almost
+always \fB-1\fP or \fB1\fP. Examples of event specs are \fBkey/1\fP
+(the Escape key), \fBkey/142\fP (the Sleep key on the author's
+Logitech keyboard), and \fBrel/8/-1\fP (one downwards click of the
+first wheel of a mouse or other pointing device).
+.TP
+.BR ACTION
+Like event specs, actions are slash-separated lists, where the first
+element is the action type, and further elements are action arguments
+that depend on the type. Unlike event specs, actions \fBmust be
+enclosed in double quotes\fP as they may contain spaces. The action
+types and their arguments are discussed below. Please do not forget
+that all action strings must be enclosed in double quotes.
+
+.SH ACTIONS
+\fBevrouter\fP is designed to support an extensible number of
+actions. In the current (alpha) version, the choice is somewhat
+limited, but generic enough to perform many tasks.
+.TP
+.BR XKey/\fIKEYSYM\fP[+\fIKEYSYM\fP[...]]
+If the rule matches, the specified list of X Key Sym(bols) will be
+injected into the X event subsystem (using the X Test Extension).
+.TP
+.BR
+X key events will be simulated for key presses, key repeats and
+releases, so that keyboard keys will behave as expected. When the
+button is pressed, key press events for each symbol in the list will
+be generated. If key repeat events come in, the last key in the list
+will be repeated (this simulates the behaviour of real
+keyboards). When the input key is released, key release events for
+each symbol in the list will be issued, from last down to first.
+.TP
+.BR
+\fIKEYSYM\fP is a case-sensitive, alphanumeric name of an X
+key. \fIKEYSYM\fP must be a symbol mapped to a key, otherwise the
+event cannot be generated and \fBevrouter\fP will issue a warning to
+standard output. This is not a fatal condition because X keymaps are
+reasonably volatile, especially in multilingual setups. You can see a
+list of currently mapped keysyms by entering \fBxmodmap -pk\fP (the
+symbols inside the parentheses are keysyms).
+.TP
+.BR
+Up to 256 keysyms can be specified, separated by plus signs to denote
+key combinations. It is not currently possible to generate sequences
+of keys.
+.TP
+.BR
+For example, \fBXKey/Escape\fP refers to the Escape key,
+\fBXKey/Menu\fP refers to the Menu key on a 105 key PC keyboard, and
+\fBXKey/kana_SHI\fP is the kana for SHI on a Japanese keyboard.
+
+
+
+.TP
+.BR XButton/\fIBUTTON-NUMBER\fP
+If the rule matches, the X Test Extension will be used to simulate a
+mouse button press.
+.TP
+.BR
+X button events will be
+simulated for key presses, and releases. Key repeats are ignored to
+facilitate dragging simulation.
+.TP
+.BR
+\fIBUTTON-NUMBER\fP is the integer number of the button to
+press. \fBxev(1)\fP can be used to see what button numbers correspond
+to what mouse buttons. On a right handed mouse, buttons 1 to 3 are the
+left, middle and right button. On many wheel mice, wheel events are
+transmitted to X11 as buttons 4 and 5, but your mileage may vary.
+.TP
+.BR
+For example, \fBXButton/1\fP refers to the left mouse key. On some
+multi-button mice, people like to map one of the least used buttons to
+\fBXButton2\fP as the wheel (middle) button may be difficult to press
+without generating wheel events.
+
+
+.TP
+.BR Shell/\fICOMMAND\fP
+If the rule matches, and shell commands are enabled in the source, the
+user's shell will be invoked to execute the specified \fBCOMMAND\fP.
+.TP
+.BR
+This will only take place on button press events. Repeats and releases
+are completely ignored.
+.TP
+.BR
+\fICOMMAND\fP is any shell command the user can execute from a
+shell. The command will run in the foreground. It is the user's
+responsibility to ensure it terminates quickly enough for more events
+to be processed. There should be no need to execute number crunching
+tasks over this interface, anyway.
+.TP
+.BR
+For example, \fBShell/xset dpms force standby\fP will use
+\fBxset(1)\fP to force the display to standby mode, while
+\fBShell/xmms &\fP will run \fBxmms(1)\fP in the background.
+
+
+.TP
+.BR XMMS/\fICOMMAND\fP
+If the rule matches, and shell XMMS support is enabled in the source,
+and XMMS is running, the specified \fBCOMMAND\fP will be sent to the media
+system.
+.TP
+.BR
+This will only take place on button press events. Repeats and releases
+are ignored. The following is a list of commands supported:
+.TP
+.BR XMMS/balance/\fIDELTA\fP
+Modify the balance. The mandatory third argument \fIDELTA\fP is an
+integer between -100 and 100 (0 is pointless). 100 denotes a full
+shift to the right, -100 denotes a full shift to the left. These are
+\fBrelative\fP values, not absolute. \fBXMMS/balance/-5\fP will move
+the balance 5% to the left.
+.TP
+.BR XMMS/eject
+Pushes the eject button on XMMS.
+.TP
+.BR XMMS/next
+Moves to the next track on the playlist.
+.TP
+.BR XMMS/pause
+Pauses playback.
+.TP
+.BR XMMS/play
+Starts or resumes playback.
+.TP
+.BR XMMS/playpause
+If XMMS is playing, pause. If it is paused, play. Simulates the
+play-pause buttons on keyboards, remote controls et cetera.
+.TP
+.BR XMMS/prev
+Moves to the previous track on the playlist.
+.TP
+.BR XMMS/repeat
+Toggles repeat.
+.TP
+.BR XMMS/shuffle
+Toggles shuffle.
+.TP
+.BR XMMS/stop
+Stops playback.
+.TP
+.BR XMMS/volume/\fIDELTA\fP
+Modify the volume. The mandatory third argument \fIDELTA\fP is an
+integer between -100 and 100 (0 is pointless). This is a
+\fBrelative\fP value. \fBXMMS/balance/-5\fP will decrease the volume
+by 5%.
+.SH HINTS
+For each incoming event, the ruleset is iterated through until one
+rule matches. This (and no other) rule decides the action to be
+taken. This implies that more generic rules should be towards the end
+of the ruleset.
+.PP
+Use \fBevrouter -d\fP, but weed out the regular expressions. Think
+what would happen if you change your \fIAcme Foobar USB Mouse\fP for a
+\fIXyzzy Baz USB Mouse\fP. Most mice include the word `Mouse' in there
+somewhere. Keyboards, predictably, include `Keyboard' in their
+description. You can use that to your advantage when writing the match
+expression.
+.PP
+Unless your system has hardwired ports, avoid matching on the actual
+device names. Think what would happen if you unplugged all your
+devices and plugged them into different ports, or simply plugged them
+in in a different order.
+.PP
+Many of the fancier devices actually contain two interfaces! My
+Logitech keyboard has a mouse-like wheel. It reports its events using
+a second event interface (doubtless a side-effect of its USB HID
+descriptors). Annoyingly, both are named the same, but they issue
+different event types and codes. When sniffing for a device, try using
+\fBevrouter -d /dev/input/event*\fP.
+.PP
+If it's not detected, make sure you have enough event character device
+nodes! Debian GNU/Linux creates four of them, and three are already
+taken up on my system with just a mouse and keyboard.
+.PP
+The X11 actions require the presence of the \fBXTEST\fP
+extension. Make sure your server has it. Try \fBxdpyinfo | grep
+XTEST\fP.
+.PP
+If it's still not detected, make sure the \fBevdev\fP
+(\fBCONFIG_INPUT_EVDEV\fP) module is loaded (or compiled into the
+kernel). For USB devices, also check for \fBhid\fP
+(\fBCONFIG_HIDDEV\fP) and that no other driver (e.g. \fBusbmouse\fP)
+is laying claim on the device. \fBCONFIG_INPUT\fP (and its associated
+modules/drivers) is another good place to look.
+.SH SECURITY
+Ownership of the event devices \fB/dev/input/event*\fP is an obvious
+security issue. Make sure you know what you're doing and keep the
+permissions and ownership as limited as possible.
+.SH RESTRICTIONS
+\fBevrouter\fP does not gain exclusivity of any devices. This can lead
+to a problem if both X11 and \fBevrouter\fP detect the same
+keypress. \fBevrouter\fP will do nothing to dissuade X11 from
+processing the event, but may also act on it. This may well lead to
+two keypresses being generated by the same key. The best case scenario
+is that the X11-generated keypress will be ignored. A common case is
+emacs, which may beep in response to the X11-generated, unknown
+keysym, then act on the \fBevrouter\fP event ( or vice versa!). The
+worst case scenario is that two separate actions are taken, and this
+is definitely undesirable.
+.PP
+To detect and debug this, you can use the \fBxev(1)\fP tool. To block
+X11 from processing the event, you must remove all keysyms from the
+offending keycode. Please see the manpage for \fBxmodmap(1)\fP for
+more information.
+.SH EXAMPLES
+An example ruleset is included with this distribution. In a perfect
+world, you should find it under \fB/usr/share/doc/evrouter/\fP.
+.SH FILES
+The process ID of the daemon running for display :\fBDISPLAY\fP can be
+found in /tmp/.evrouter:\fBDISPLAY\fP.
+.SH BUGS
+.PP
+This is an early alpha version, numerous bugs are sure to be around.
+.PP
+The verbosity control doesn't do much at the moment.
+.SH AUTHOR
+Written by Alexios Chouchoulas.
+.SH "REPORTING BUGS"
+Report bugs to Alexios Chouchoulas <alexios@bedroomlan.org>.
+.SH COPYRIGHT
+Copyright \(co 2004 Alexios Chouchoulas <alexios@bedroomlan.org>.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH "SEE ALSO"
+imwheel(1),
+lsusb(1),
+regex(7),
+xev(1),
+xmms(1),
+xwininfo(1).
+\"  LocalWords:  roff nh hy nf fi br sp vv Alexios manpage iconv UTF pty pty's
+\"  LocalWords:  Chouchoulas libiconv unicode utf SmartScroll lsusb dev pid IDs
+\"  LocalWords:  xxxx CSR ch SMS sms evrouter alexios Exp imwheel hotkeys xmms
+\"  LocalWords:  keypresses evrouterrc config CONFIG USB PS Logitech liks alt
+\"  LocalWords:  Konsole konsole REGEX POSIX regex xwininfo MODMAP ctrl rel Sym
+\"  LocalWords:  keycodes XKey KEYSYM bols keymaps keysyms xmodmap pk kana SHI
+\"  LocalWords:  XButton xev xset dpms playlist playpause prev Foobar
+\"  LocalWords:  Xyzzy Baz Debian XTEST xdpyinfo grep evdev HIDDEV usbmouse
+\"  LocalWords:  keypress keysym keycode

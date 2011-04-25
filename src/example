@@ -1,0 +1,143 @@
+#!/usr/bin/evrouter /dev/input/* -c
+#
+# This is an example ruleset for evrouter. Don't use this as your run
+# control file! You will undoubtedly want/need to change things for
+# your own set up. If we all had the same combination of peripherals,
+# there wouldn't be a need for software like this!
+#
+# $Id: example 6 2004-09-07 22:57:39Z alexios $
+#
+# $Log$
+# Revision 2.0  2004/09/07 22:57:39  alexios
+# Stepped version to recover CVS repository after near-catastrophic disk
+# crash.
+#
+# Revision 1.1.1.1  2004/09/07 22:52:34  alexios
+# Initial post-crash revision, re-initialised to recover CVS repository after
+# near-catastrophic disk crash.
+#
+# Revision 1.1  2004/01/28 21:43:20  alexios
+# Initial revision.
+#
+#
+###############################################################################
+
+###############################################################################
+#
+# An example of how to remap an unused button on a mouse
+# 
+###############################################################################
+
+Window ""
+"Mouse" "" any key/279 "XButton/2" # Issue middle button events
+
+###############################################################################
+#
+# How to add new keyboard features to a new application
+# 
+###############################################################################
+
+Window "Opera [0-9]+\.[0-9]+"
+"Keyboard" "" none key/158 "XKey/Alt_L+Left"      # 'back' on a Logitech keyboard
+"Keyboard" "" none key/172 "XKey/Control_L+space" # 'home' on same
+
+###############################################################################
+#
+# Map global hotkeys to the XMMS extension (I really like this) Also,
+# commented out X keysyms and shell commands to do the same thing (you
+# need an XMMS plugin for the X keysyms to work as hotkeys).
+#
+###############################################################################
+
+Window ""
+#"Keyboard" "" any	key/113 "XKey/XF86AudioMute"
+#"Keyboard" "" any	key/113 "Shell/xmms --play-pause"
+"Keyboard" "" none	key/113 "XMMS/playpause"
+"Keyboard" "" shift	key/113 "XMMS/repeat"
+"Keyboard" "" any	key/113 "XMMS/shuffle"
+
+#"Keyboard" "" any		key/114 "XKey/XF86AudioLowerVolume"
+"Keyboard" "" none		key/114 "XMMS/volume/-5"
+"Keyboard" "" shift		key/114 "XMMS/volume/-10"
+"Keyboard" "" control		key/114 "XMMS/balance/-5"
+"Keyboard" "" control+shift	key/114 "XMMS/balance/-10"
+
+#"Keyboard" "" any		key/115 "XKey/XF86AudioRaiseVolume"
+"Keyboard" "" none		key/115 "XMMS/volume/5"
+"Keyboard" "" shift		key/115 "XMMS/volume/10"
+"Keyboard" "" control		key/115 "XMMS/balance/5"
+"Keyboard" "" control+shift	key/115 "XMMS/balance/10"
+
+#"Keyboard" "" any	key/165 "Shell/xmms --rew"
+"Keyboard" "" any	key/165 "XMMS/prev"
+#"Keyboard" "" any	key/163 "Shell/xmms --fwd"
+"Keyboard" "" any	key/163 "XMMS/next"
+#"Keyboard" "" any	key/164 "Shell/xmms --play-pause"
+"Keyboard" "" any	key/164 "XMMS/playpause"
+#"Keyboard" "" any	key/166	"Shell/xmms --stop"
+"Keyboard" "" any	key/166	"XMMS/stop"
+
+
+###############################################################################
+#
+# Some other keys on a Logitech keyboard
+#
+###############################################################################
+
+"Keyboard" "" any	key/256 "XKey/XF86Community"
+"Keyboard" "" any	key/257 "XKey/XF86Finance"
+"Keyboard" "" any	key/258 "XKey/XF86VendorHome"
+"Keyboard" "" any	key/259 "XKey/XF86Shop"
+"Keyboard" "" any	key/172 "XKey/XF86HomePage"
+
+
+###############################################################################
+#
+# Adding wheels and keystrokes to legacy applications
+# 
+###############################################################################
+
+# XV
+
+Window "xv 3\.10"
+"" "" any rel/8/1  "XKey/BackSpace"
+"" "" any rel/8/-1 "XKey/space"
+
+Window "xv visual schnauzer"
+""	"" any	rel/8/1  "XKey/Up"
+""	"" any	rel/8/-1 "XKey/Down"
+
+# Pine
+
+Window "Pine"
+"" "" none rel/8/1 "XKey/Up"
+"" "" any rel/8/1 "XKey/Prior"
+"" "" none rel/8/-1 "XKey/Down"
+"" "" any rel/8/1 "XKey/Next"
+
+# Netscape Navigator, if you're mad enough to use it.
+# Use any modifier key with the wheel for slow scrolling.
+
+Window "Netscape"
+"" "" none rel/8/1  "XKey/Prior"
+"" "" any  rel/8/1  "XKey/Up"
+"" "" none rel/8/-1 "XKey/Next"
+"" "" any  rel/8/1  "XKey/Up"
+
+
+###############################################################################
+#
+# Some generally applicable fallback events follow
+#
+###############################################################################
+
+Window ""
+
+# The wheel and associated buttons on Logitech keyboards can be made
+# to generate usable events this way.
+
+"Keyboard" "" any rel/8/1  "XKey/Up"      # The wheel itself
+"Keyboard" "" any rel/8/-1 "XKey/Down"
+"Keyboard" "" none key/158 "XKey/Escape"  # The 'back' key near the wheel.
+"Keyboard" "" none key/159 "XKey/Return"  # The 'go' key near the wheel.
+"Keyboard" "" none key/261 "XButton/2"    # The wheel button

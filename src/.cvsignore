@@ -1,0 +1,12 @@
+.deps
+.libs
+DEADJOE
+Makefile
+Makefile.in
+a.sh
+data
+evrouter
+garmintool
+lmctl
+tmp
+old

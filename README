@@ -1,0 +1,40 @@
+	   evrouter - An Event Router for the Linux Event Interface
+
+	  http://www.bedroomlan.org/projects/evrouter
+
+  Copyright (C) 2004,2009 Alexios Chouchoulas
+
+  evrouter is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+All comments are welcome.
+
+	- Alexios Chouchoulas <alexios@bedroomlan.org>
+
+
+
+Many thanks to the following people who supplied bug reports, patches,
+helpful comments, constructive death threats, and what not:
+
+Version 0.3.2:
+
+* Stephen Graham for proposing the -q option (even though I already
+  needed it), and for spotting the foreground option that
+  wouldn't.
+
+Version 0.4:
+
+* Added patch from http://www.digriz.org.uk/debian/fujitsu/t2010 (support
+  for switch events).

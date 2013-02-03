@@ -244,7 +244,7 @@ handle_event (evdev_t * dev, int devindex, struct input_event * ev)
 	char          * wname = NULL;
 	unsigned int    mods;
 	XErrorHandler   old_handler;
-		
+
 	if ((ev->type != EV_KEY) && 
 	    ((ev->type != EV_REL)) &&
 	    (ev->type != EV_SW)) return;
@@ -360,6 +360,7 @@ print_event (evdev_t * dev, int devindex, struct input_event * ev)
 		       string_modifiers (get_modifier_state (d)),
 		       ev->code);
 	} else if ((ev->type == EV_REL)) {
+	
 		get_focus ();
 		
 		printf("\"%s\" \"%s\" %s rel/%d/%d \"fill this in!\"\n",

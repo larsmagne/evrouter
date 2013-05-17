@@ -46,7 +46,7 @@ dnl here (BUT NOT the files in debian/)
 AM_INIT_AUTOMAKE(evrouter, $PACKAGE_VERSION)
 
 dnl create a config.h file (Automake will add -DHAVE_CONFIG_H)
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 AC_SUBST(VERSION)
 
